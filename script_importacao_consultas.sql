@@ -1,4 +1,4 @@
--- Criação das tabelas para armazenar os dados das operadoras e das demonstrações contábeis
+-- CriaÃ§Ã£o das tabelas para armazenar os dados das operadoras e das demonstraÃ§Ãµes contÃ¡beis
 CREATE TABLE operadoras (
     id SERIAL PRIMARY KEY,
     registro_ans VARCHAR(50) UNIQUE,
@@ -33,7 +33,7 @@ CREATE TABLE demonstracoes_contabeis (
     data_importacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Importação de dados via comando COPY (PostgreSQL)
+-- ImportaÃ§Ã£o de dados via comando COPY (PostgreSQL)
 COPY operadoras(
     registro_ans, cnpj, razao_social, nome_fantasia, modalidade, logradouro, numero, complemento,
     bairro, cidade, uf, cep, ddd, telefone, email, representante, cargo_representante,
@@ -48,21 +48,21 @@ FROM '/caminho/do/arquivo/1T2023.csv'
 DELIMITER ';'
 CSV HEADER ENCODING 'LATIN1';
 
--- Query analítica para os 10 maiores gastos no último trimestre
-SELECT o.nome_fantasia, SUM(d.saldo_final) AS total_despesas
+-- Query analÃ­tica para os 10 maiores gastos no Ãºltimo trimestre
+SELECT o.cnpj, SUM(d.saldo_final) AS total_despesas
 FROM demonstracoes_contabeis d
 JOIN operadoras o ON d.registro_ans = o.registro_ans
-WHERE d.descricao ILIKE '%sinistros conhecidos ou avisados de assistência à saúde médico hospitalar%'
+WHERE d.descricao ILIKE '%sinistros conhecidos ou avisados de assistÃªncia Ã  saÃºde mÃ©dico hospitalar%'
   AND d.data >= (CURRENT_DATE - INTERVAL '3 months')
 GROUP BY o.nome_fantasia
 ORDER BY total_despesas DESC
 LIMIT 10;
 
--- Query analítica para os 10 maiores gastos no último ano
-SELECT o.nome_fantasia, SUM(d.saldo_final) AS total_despesas
+-- Query analÃ­tica para os 10 maiores gastos no Ãºltimo ano
+SELECT o.cnpj, SUM(d.saldo_final) AS total_despesas
 FROM demonstracoes_contabeis d
 JOIN operadoras o ON d.registro_ans = o.registro_ans
-WHERE d.descricao ILIKE '%sinistros conhecidos ou avisados de assistência à saúde médico hospitalar%'
+WHERE d.descricao ILIKE '%sinistros conhecidos ou avisados de assistÃªncia Ã  saÃºde mÃ©dico hospitalar%'
   AND d.data >= (CURRENT_DATE - INTERVAL '1 year')
 GROUP BY o.nome_fantasia
 ORDER BY total_despesas DESC
